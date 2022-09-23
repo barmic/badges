@@ -1,5 +1,7 @@
 # Badge generator
 
+[Outil en ligne](https://barmic.github.io/badges/)
+
 ## CSV d'entrée
 
 On prend un fichier CSV qui possède 6 collones
