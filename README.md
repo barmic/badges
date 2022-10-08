@@ -2,8 +2,6 @@
 
 [Outil en ligne](https://barmic.github.io/badges/)
 
-![badge](https://github.com/barmic/badges/blob/main/static/badge.svg)
-
 ## CSV d'entrée
 
 On prend un fichier CSV qui possède 6 collones
