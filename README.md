@@ -2,6 +2,8 @@
 
 [Outil en ligne](https://barmic.github.io/badges/)
 
+![badge](https://github.com/barmic/badges/blob/main/static/badge.svg)
+
 ## CSV d'entrée
 
 On prend un fichier CSV qui possède 6 collones
@@ -17,7 +19,7 @@ La première ligne du CSV doit être une ligne de titre. Le nom des colonnes est
 
 La colonnes du type doit contenir les valeurs : `attendee`, `staff`, `speaker`, `sponsor`.
 
-Un exemple de csv se trouve dans `examples/compl.csv`.
+Un exemple de csv se trouve dans [examples/compl.csv](https://github.com/barmic/badges/blob/main/examples/compl.csv).
 
 ## Usage
 
@@ -29,7 +31,7 @@ Un exemple de csv se trouve dans `examples/compl.csv`.
 
 ## Modèle
 
-Le modèle du badge se fait via le svg `static/badge.svg`. Le SVG doit contenir les identifiants :
+Le modèle du badge se fait via le svg [static/badge.svg](https://github.com/barmic/badges/blob/main/static/badge.svg). Le SVG doit contenir les identifiants :
 
 - `snc-firstname`, `snc-lastname`, `snc-barcode`, `snc-type`, `snc-univ1`, `snc-univ2`, `snc-year` qui vont recevoir comme textContent les valeurs appropriés
 - `snc-type-background` qui va recevoir comme style la couleur de fond associée au type
