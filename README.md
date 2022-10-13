@@ -2,34 +2,31 @@
 
 [Outil en ligne](https://barmic.github.io/badges/)
 
-## CSV d'entrée
+## CSV input
 
-On prend un fichier CSV qui possède 6 collones
+Input CSV should have at least 6 columns:
 
-- Prénom
-- Nom
-- Type
-- Code bare
-- Université 1
-- Université 2
+- firstname
+- lastname
+- type (`attendee`, `staff`, `speaker`, `sponsor` case insensitive)
+- bare code value
+- University 1
+- University 2
 
-La première ligne du CSV doit être une ligne de titre. Le nom des colonnes est libre.
+The first line should be columns titles.
 
-La colonnes du type doit contenir les valeurs : `attendee`, `staff`, `speaker`, `sponsor`.
-
-Un exemple de csv se trouve dans [examples/compl.csv](https://github.com/barmic/badges/blob/main/examples/compl.csv).
+An example of csv can be found here: [examples/compl.csv](https://github.com/barmic/badges/blob/main/examples/compl.csv).
 
 ## Usage
 
-1. charger le fichier CSV
-2. sélectionner les colonnes de chaque champ des badges
-3. il est possible de vérifier le résultats sur différents exemples
-4. exporter les badges
+1. load CSV
+2. select column of each field of badge
+3. you can check result on some examples
+4. export badges
 
+## Template
 
-## Modèle
+The badge template can be found here [static/badge.svg](https://github.com/barmic/badges/blob/main/static/badge.svg). The SVG must have somes ids :
 
-Le modèle du badge se fait via le svg [static/badge.svg](https://github.com/barmic/badges/blob/main/static/badge.svg). Le SVG doit contenir les identifiants :
-
-- `snc-firstname`, `snc-lastname`, `snc-barcode`, `snc-type`, `snc-univ1`, `snc-univ2`, `snc-year` qui vont recevoir comme textContent les valeurs appropriés
-- `snc-type-background` qui va recevoir comme style la couleur de fond associée au type
+- `snc-firstname`, `snc-lastname`, `snc-barcode`, `snc-type`, `snc-univ1`, `snc-univ2`, `snc-year` that will receive value in `textContent`
+- `snc-type-background` that will receive background color of type
