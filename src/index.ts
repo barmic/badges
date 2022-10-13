@@ -104,7 +104,7 @@ function examples(): void {
 
 function refresh(): void {
     const selecteds: number[] = [];
-    for(var i = 0; i < 3; i++) {
+    for(let i = 0; i < 3; i++) {
         selecteds.push(1 + Math.floor(Math.random() * (context.data.length - 1)));
     }
     context.examples = selecteds;
@@ -162,8 +162,8 @@ function generateAll(): void {
         examples.textContent = '';
     }
 
-    var badges: any[] = [];
-    for(var i = 1; i < context.data.length; i += 1) {
+    const badges: any[] = [];
+    for(let i = 1; i < context.data.length; i += 1) {
         badges.push(updateSVG(context.svg, badgeParams(i)));
     }
 
@@ -173,8 +173,8 @@ function generateAll(): void {
 function generateZip(badges: SVGElement[]) {
     const zip = new JSZip();
 
-    var i = 1;
-    var pages: Promise<any> = new Promise((resolve, reject) => resolve(null));
+    let i = 1;
+    let pages: Promise<any> = new Promise((resolve, _reject) => resolve(null));
     for (const badge of badges) {
         const number = `${i++}`.padStart(3, '0');
         pages = pages.then((_) => generatePdf(badge).then((pdf) => zip.file(`badge_${number}.pdf`, pdf)));
@@ -194,7 +194,6 @@ function generateZip(badges: SVGElement[]) {
         });
 }
 
-
 function generatePdf(badge: SVGElement): Promise<Blob> {
     const size = 'A6';
     const doc = new PDFDocument({size});
@@ -203,7 +202,7 @@ function generatePdf(badge: SVGElement): Promise<Blob> {
     SVGtoPDF(doc, badge, 0, 0, {});
     doc.end();
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
         stream.on('finish', () => resolve(stream.toBlob('application/pdf')));
     });
 }
