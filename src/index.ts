@@ -40,6 +40,8 @@ const context = {
     data: [['']],
     typeConfig: TYPES,
     examples: [] as number[],
+    totalBagdes: 0,
+    createdBadges: 0,
 };
 const opts: QRCodeToDataURLOptions = {
     errorCorrectionLevel: 'H',
@@ -71,6 +73,9 @@ window.onload = () => {
         reader.onload = function (evt) {
             const result = Papa.parse((evt?.target?.result as string).trim());
             context.data = result.data as string[][];
+            for(const counter of Array.from(document.getElementsByClassName('badgesTotal'))) {
+                counter.textContent = `${context.data.length - 1}`;
+            }
             context.columns = INITIAL_COLUMNS;
             context.examples = [1, 2, 3];
 
@@ -162,39 +167,40 @@ function generateAll(): void {
         examples.textContent = '';
     }
 
-    const badges: any[] = [];
+    const badgesCreated = Array.from(document.getElementsByClassName('badgesCreated'));
+
+    let pages: Promise<JSZip> = new Promise((resolve, _reject) => resolve(new JSZip()));
     for(let i = 1; i < context.data.length; i += 1) {
-        badges.push(updateSVG(context.svg, badgeParams(i)));
-    }
-
-    generateZip(badges);
-}
-
-function generateZip(badges: SVGElement[]) {
-    const zip = new JSZip();
-
-    let i = 1;
-    let pages: Promise<any> = new Promise((resolve, _reject) => resolve(null));
-    for (const badge of badges) {
-        const number = `${i++}`.padStart(3, '0');
-        pages = pages.then((_) => generatePdf(badge).then((pdf) => zip.file(`badge_${number}.pdf`, pdf)));
-    }
-
-    pages.then((_) => zip.generateAsync({ type: 'blob' }))
-        .then((blob: Blob) => {
-            const a = document.createElement('a');
-            a.href = window.URL.createObjectURL(blob);
-            const now = new Date();
-            a.download = `badges_${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
-            a.style.position = 'fixed';
-            a.target = '_blank';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        const badgeParam = badgeParams(i);
+        const badge: SVGElement = updateSVG(context.svg, badgeParam) as any;
+        context.createdBadges += 1;
+        if (context.createdBadges % 10 === 0) {
+            badgesCreated.forEach((elem: Element) => elem.textContent = `${context.createdBadges}`);
+        }
+        pages = pages.then(async (zip: JSZip) => {
+            const [pdf, name] = await generatePdf(badge, badgeParam);
+            return zip.file(name, pdf);
         });
+    }
+    badgesCreated.forEach((elem: Element) => elem.textContent = `${context.createdBadges}`);
+
+    pages.then((zip) => zip.generateAsync({ type: 'blob' }))
+        .then((blob: Blob) => generateZip(blob));
 }
 
-function generatePdf(badge: SVGElement): Promise<Blob> {
+function generateZip(blob: Blob) {
+    const a = document.createElement('a');
+    a.href = window.URL.createObjectURL(blob);
+    const now = new Date();
+    a.download = `badges_${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
+    a.style.position = 'fixed';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+function generatePdf(badge: SVGElement, params: BadgeParams): Promise<[Blob, string]> {
     const size = 'A6';
     const doc = new PDFDocument({size});
 
@@ -203,6 +209,9 @@ function generatePdf(badge: SVGElement): Promise<Blob> {
     doc.end();
 
     return new Promise((resolve, _reject) => {
-        stream.on('finish', () => resolve(stream.toBlob('application/pdf')));
+        stream.on('finish', () => resolve([
+            stream.toBlob('application/pdf'),
+            `${params.type}_${params.lastname}_${params.barcode}.pdf`,
+        ]));
     });
 }
