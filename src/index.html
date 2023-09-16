@@ -7,49 +7,6 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <h1>Badge generator</h1>
-    <section>
-        <p>
-          On prend un fichier CSV dont la première ligne doit contenir le nom des colonnes et qui une collone pour chaque champ du badge.
-          La collone pour le <b>type</b> doit contenir les valeurs : <code>attendee</code>, <code>staff</code>, <code>speaker</code>, <code>sponsor</code>.
-        </p>
-    </section>
-
-    <section id="configuration">
-      <form>
-        <label for="csvFile">CSV</label>
-        <input type="file" id="csvFile" accept=".csv" required>
-
-        <label for="firstname">Prénom</label>
-        <select class="column" id="firstname"></select>
-
-        <label for="lastname">Nom</label>
-        <select class="column" id="lastname"></select>
-
-        <label for="type">Type (<code>attendee</code>, <code>staff</code>, <code>speaker</code>, <code>sponsor</code>)</label>
-        <select class="column" id="type"></select>
-
-        <label for="barcode">Code bare</label>
-        <select class="column" id="barcode"></select>
-
-        <label for="univ1">Université 1</label>
-        <select class="column" id="univ1"></select>
-
-        <label for="univ2">Université 2</label>
-        <select class="column" id="univ2"></select>
-      </form>
-    </section>
-
-    <div id="example-section">
-      <h2>Exemples (on <span class="badgesTotal">0</span> badges)</h2>
-      <button id="refresh">Refresh</button>
-    </div>
-    <section id="example">
-    </section>
-
-    <div id="export-section">
-      <button id="export">Export</button>
-      <p><span class="badgesCreated">0</span>/<span class="badgesTotal">0</span></p>
-    </div>
+    <div id="app"></div>
   </body>
 </html>

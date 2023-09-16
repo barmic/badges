@@ -1,3 +1,6 @@
+import { TypesConfig } from './models';
+import { QRCodeToDataURLOptions } from 'qrcode';
+
 export function year(): string {
     const now = new Date();
     const year = now.getMonth() < 3
@@ -30,3 +33,20 @@ export function id(doc: Document, id: string, consumer: (params: HTMLElement) =>
         consumer(elem);
     }
 }
+
+export const TYPES: TypesConfig = {
+  attendee:{name: 'attendee', color: '#3FC633'},
+  speaker:{name: 'speaker', color: '#FEAF00'},
+  sponsor:{name: 'sponsor', color: '#E51AE2'},
+  staff:{name: 'staff', color: '#EE0000'},
+};
+
+export const QRCODE_OPTS: QRCodeToDataURLOptions = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+    margin: 1,
+    color: {
+      dark: '#00000000',
+      light: '#FFFFFFFF'
+    }
+  };
