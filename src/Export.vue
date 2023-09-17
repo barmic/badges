@@ -1,5 +1,5 @@
 <template>
-  <div class="export">
+  <div>
     <button @click="loadSVGAndGenerate">Export</button>
     <p>{{ state.created }}/{{ badges?.length }}</p>
   </div>
@@ -104,8 +104,8 @@ export default {
 };
 </script>
 
-<style>
-div.export {
+<style scoped>
+div {
     height: 5em;
     display: flex;
     flex-direction: row;

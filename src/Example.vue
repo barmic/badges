@@ -50,14 +50,11 @@ import Badge from './Badge.vue';
 
 </script>
 
-<style>
+<style scoped>
 main {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-}
-main > div {
-  display: none;
 }
 #example {
     width: 100%;

@@ -5,42 +5,42 @@
         <input type="file" @change="loadCSV" id="csvFile" accept=".csv" required>
 
         <label for="firstname">Prénom</label>
-        <select v-model="state.firstname" @change="onChange">
+        <select id="firstname" v-model="state.firstname" @change="onChange">
           <option v-for="col in columnsopts" :key="col.value" :value="col.value">
             {{ col.text }}
           </option>
         </select>
 
         <label for="lastname">Nom</label>
-        <select v-model="state.lastname" @change="onChange">
+        <select id="lastname" v-model="state.lastname" @change="onChange">
           <option v-for="col in columnsopts" :key="col.value" :value="col.value">
             {{ col.text }}
           </option>
         </select>
 
         <label for="type">Type (<code>attendee</code>, <code>staff</code>, <code>speaker</code>, <code>sponsor</code>)</label>
-        <select v-model="state.type" @change="onChange">
+        <select id="type" v-model="state.type" @change="onChange">
           <option v-for="col in columnsopts" :key="col.value" :value="col.value">
             {{ col.text }}
           </option>
         </select>
 
         <label for="barcode">Code bare</label>
-        <select v-model="state.barcode" @change="onChange">
+        <select id="barcode" v-model="state.barcode" @change="onChange">
           <option v-for="col in columnsopts" :key="col.value" :value="col.value">
             {{ col.text }}
           </option>
         </select>
 
         <label for="univ1">Université 1</label>
-        <select v-model="state.univ1" @change="onChange">
+        <select id="univ1" v-model="state.univ1" @change="onChange">
           <option v-for="col in columnsopts" :key="col.value" :value="col.value">
             {{ col.text }}
           </option>
         </select>
 
         <label for="univ2">Université 2</label>
-        <select v-model="state.univ2" @change="onChange">
+        <select id="univ2" v-model="state.univ2" @change="onChange">
           <option v-for="col in columnsopts" :key="col.value" :value="col.value">
             {{ col.text }}
           </option>
@@ -88,14 +88,16 @@
         }
       },
       onChange() {
-        const badges: BadgeParams[] = this.rawData.map((line) => ({
-          firstname: line[this.state.firstname],
-          lastname: line[this.state.lastname],
-          barcode: line[this.state.barcode],
-          type: line[this.state.type] as BadgeParams['type'],
-          univ1: this.state.univ1 ? line[this.state.univ1] : undefined,
-          univ2: this.state.univ2 ? line[this.state.univ2] : undefined,
-        } satisfies BadgeParams));
+        const badges: BadgeParams[] = this.rawData
+          .filter((_, idx) => idx > 0)
+          .map((line) => ({
+            firstname: line[this.state.firstname],
+            lastname: line[this.state.lastname],
+            barcode: line[this.state.barcode],
+            type: line[this.state.type] as BadgeParams['type'],
+            univ1: this.state.univ1 ? line[this.state.univ1] : undefined,
+            univ2: this.state.univ2 ? line[this.state.univ2] : undefined,
+          } satisfies BadgeParams));
 
         this.$emit('badges', badges);
       }
@@ -103,10 +105,11 @@
   };
 </script>
 
-<style>
+<style scoped>
 form {
-    display: grid;
-    grid-template-columns: 20em auto;
-    flex: 1;
+  display: grid;
+  grid-template-columns: 20em auto;
+  flex: 1;
+  width: 50%;
 }
 </style>

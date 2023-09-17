@@ -4,3 +4,21 @@
     font-weight: normal;
     font-style: normal;
 }
+
+:root {
+    --d0: #171828;
+    --d1: #494B71;
+    --d2: #8688A0;
+    --d3: #414267;
+    --d4: #2E2A43;
+    --sc-yellow: #e3b71b;
+}
+
+body {
+    background-color: var(--d4);
+    color: white;
+}
+
+h1, h2 {
+    color: var(--sc-yellow);
+}

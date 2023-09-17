@@ -1,13 +1,13 @@
 <template>
-  <div>{{ badge || 'toto'}}</div>
-  <section ref="section">
+  <div class="hack">{{ badge || 'toto'}}</div>
+  <section ref="section" class="svg">
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, capitalize } from 'vue';
 import { BadgeParams } from './models';
-import { id, QRCODE_OPTS, TYPES } from './utils';
+import { id, QRCODE_OPTS, TYPES, year } from './utils';
 import QRCode from 'qrcode';
 
 const props = defineProps<{
@@ -50,3 +50,12 @@ const badge = computed(() => {
   return false;
 });
 </script>
+
+<style>
+section.svg > *{
+  background-color: white;
+}
+div.hack {
+  display: none;
+}
+</style>

@@ -32,3 +32,9 @@
     }
   };
 </script>
+
+<style scoped>
+Badgeform {
+  width: 50%;
+}
+</style>
