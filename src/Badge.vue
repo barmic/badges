@@ -5,9 +5,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, capitalize } from 'vue';
+import { ref, computed } from 'vue';
 import { BadgeParams } from './models';
-import { id, QRCODE_OPTS, TYPES, year } from './utils';
+import { id, QRCODE_OPTS, TYPES, year, capitalize } from './utils';
 import QRCode from 'qrcode';
 
 const props = defineProps<{

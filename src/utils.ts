@@ -24,7 +24,16 @@ export function year(): string {
 }
 
 export function capitalize(input: string): string {
-    return input ? input.charAt(0).toUpperCase() + input.slice(1) : '';
+    let result = '';
+    let mustUpper = true;
+    for (const char of input.split('')) {
+        result += mustUpper
+            ? char.toUpperCase()
+            : char.toLowerCase();
+        mustUpper = !RegExp(/^\p{L}/,'u').test(char);
+    }
+    console.log(result)
+    return result;
 }
 
 export function id(doc: Document, id: string, consumer: (params: HTMLElement) => void) {
