@@ -36,14 +36,31 @@ export default {
         .then(response => response.text())
         .then(txt => this.generateAll(badges, txt));
     },
+    weightBadge(a: BadgeParams): number {
+      const typeOrder = [ 'staff', 'speaker', 'sponsor', 'attendee' ];
+      switch(a.type) {
+        case 'staff': return 0;
+        case 'speaker': return 1; // TODO distinct mercredi / jeudi
+        case 'attendee': return a.univ1 ? 2 : 3;
+        case 'sponsor': return 4;
+      }
+    },
+    sortBadge(a: BadgeParams, b: BadgeParams): number {
+      const aWeight = this.weightBadge(a);
+      const bWeight = this.weightBadge(b);
+      return aWeight !== bWeight
+        ? aWeight - bWeight
+        : a.lastname.localeCompare(b.lastname);
+    },
     generateAll(badges: BadgeParams[], svg: string): Promise<void> {
       let pages: Promise<JSZip> = new Promise((resolve, _reject) => resolve(new JSZip()));
+      badges.sort((a, b) => this.sortBadge(a, b));
       for(let i = 1; i < badges.length; i += 1) {
           const badgeParam = badges[i];
           const badge: SVGElement = this.updateSVG(svg, badgeParam) as any;
           this.state.created += 1;
           pages = pages.then(async (zip: JSZip) => {
-              const [pdf, name] = await this.generatePdf(badge, badgeParam);
+              const [pdf, name] = await this.generatePdf(i, badge, badgeParam);
               return zip.file(name, pdf);
           });
       }
@@ -85,7 +102,7 @@ export default {
         a.click();
         document.body.removeChild(a);
     },
-    generatePdf(badge: SVGElement, params: BadgeParams): Promise<[Blob, string]> {
+    generatePdf(idx: number, badge: SVGElement, params: BadgeParams): Promise<[Blob, string]> {
         const size = 'A6';
         const doc = new PDFDocument({size});
 
@@ -93,10 +110,12 @@ export default {
         SVGtoPDF(doc, badge, 0, 0, {});
         doc.end();
 
+        const index = `${idx}`.padStart(4, '0');
+
         return new Promise((resolve, _reject) => {
             stream.on('finish', () => resolve([
                 stream.toBlob('application/pdf'),
-                `${params.type}_${params.lastname}_${params.barcode}.pdf`,
+                `${index}_${params.type}_${capitalize(params.lastname)}_${capitalize(params.barcode)}.pdf`,
             ]));
         });
     }

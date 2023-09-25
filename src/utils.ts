@@ -32,7 +32,6 @@ export function capitalize(input: string): string {
             : char.toLowerCase();
         mustUpper = !RegExp(/^\p{L}/,'u').test(char);
     }
-    console.log(result)
     return result;
 }
 
