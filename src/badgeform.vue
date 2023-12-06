@@ -3,103 +3,67 @@
       <form>
         <label for="csvFile">CSV</label>
         <input type="file" @change="loadCSV" id="csvFile" accept=".csv" required>
-
-        <label for="firstname">Prénom</label>
-        <select id="firstname" v-model="state.firstname" @change="onChange">
-          <option v-for="col in columnsopts" :key="col.value" :value="col.value">
-            {{ col.text }}
-          </option>
-        </select>
-
-        <label for="lastname">Nom</label>
-        <select id="lastname" v-model="state.lastname" @change="onChange">
-          <option v-for="col in columnsopts" :key="col.value" :value="col.value">
-            {{ col.text }}
-          </option>
-        </select>
-
-        <label for="type">Type (<code>attendee</code>, <code>staff</code>, <code>speaker</code>, <code>sponsor</code>)</label>
-        <select id="type" v-model="state.type" @change="onChange">
-          <option v-for="col in columnsopts" :key="col.value" :value="col.value">
-            {{ col.text }}
-          </option>
-        </select>
-
-        <label for="barcode">Code bare</label>
-        <select id="barcode" v-model="state.barcode" @change="onChange">
-          <option v-for="col in columnsopts" :key="col.value" :value="col.value">
-            {{ col.text }}
-          </option>
-        </select>
-
-        <label for="univ1">Université 1</label>
-        <select id="univ1" v-model="state.univ1" @change="onChange">
-          <option v-for="col in columnsopts" :key="col.value" :value="col.value">
-            {{ col.text }}
-          </option>
-        </select>
-
-        <label for="univ2">Université 2</label>
-        <select id="univ2" v-model="state.univ2" @change="onChange">
-          <option v-for="col in columnsopts" :key="col.value" :value="col.value">
-            {{ col.text }}
-          </option>
-        </select>
       </form>
     </section>
 </template>
 
 <script lang="ts">
-  import { reactive, ref } from 'vue';
-  import { BadgeParams, ColumnsConfig } from './models';
+  import { BadgeParams } from './models';
+  import { typeMapping } from './utils';
   import Papa from 'papaparse';
 
-  type Column = {value: number, text: string}
-
   export default {
-    setup() {
-      const state: ColumnsConfig = reactive({
-          firstname: 0,
-          lastname: 0,
-          type: 0,
-          barcode: 0,
-      });
-      const columnsopts = ref([] as Column[]);
-      const rawData: string[][] = [];
-
-      return {
-        state,
-        columnsopts,
-        rawData,
-      };
-    },
     methods: {
       loadCSV(e: any): void {
         const reader = new FileReader();
         reader.readAsText(e?.target?.files[0], 'UTF-8');
         reader.onload = (evt) => {
-            this.columnsopts.splice(0, this.columnsopts.length);
-            const result = Papa.parse((evt?.target?.result as string).trim());
-            this.rawData = result.data as string[][];
+          const result = Papa.parse((evt?.target?.result as string).trim());
+          const rawData = result.data as string[][];
 
-            (result.data[0] as string[])
-              .filter(s => s)
-              .forEach((text, value) => this.columnsopts.push({text, value}));
+          const columnsopts = (result.data[0] as string[])
+            .filter(s => s)
+            .map((text, value) => ({text, value}));
+
+          const firstname = 1 + (columnsopts.find((col) => col.text === 'Prénom')?.value ?? -1);
+          const lastname = 1 + (columnsopts.find((col) => col.text === 'Nom')?.value ?? -1);
+          const typeCol = 1 + (columnsopts.find((col) => col.text === 'Tarif')?.value ?? -1);
+          const barcode = 1 + (columnsopts.find((col) => col.text === 'Codes-barres')?.value ?? -1);
+          const cmdCol = 1 + (columnsopts.find((col) => col.text === 'Commande')?.value ?? -1);
+
+          const commands: Map<string, BadgeParams> = rawData.slice(1).reduce(
+            (a: Map<string, BadgeParams>, b: string[]) => {
+              const cmd = b[cmdCol]
+              const tarif = b[typeCol];
+              const univ1 = tarif.startsWith('Uam') ? tarif.substring(7) : undefined;
+              const univ2 = tarif.startsWith('Upm') ? tarif.substring(7) : undefined;
+              const type = typeMapping(tarif);
+              const current = a.get(cmd);
+              if (current) {
+                if (univ1) {
+                  current.univ1 = univ1;
+                } else if (univ2) {
+                  current.univ2 = univ2;
+                } else {
+                  current.type = type;
+                }
+              } else {
+                a.set(cmd, {
+                  firstname: b[firstname],
+                  lastname: b[lastname],
+                  type: type,
+                  barcode: b[barcode],
+                  univ1: univ1,
+                  univ2: univ2,
+                })
+              }
+              return a;
+            },
+            new Map<string, BadgeParams>()
+          );
+
+          this.$emit('badges', Array.from(commands.values()));
         }
-      },
-      onChange() {
-        const badges: BadgeParams[] = this.rawData
-          .filter((_, idx) => idx > 0)
-          .map((line) => ({
-            firstname: line[this.state.firstname],
-            lastname: line[this.state.lastname],
-            barcode: line[this.state.barcode],
-            type: line[this.state.type] as BadgeParams['type'],
-            univ1: this.state.univ1 ? line[this.state.univ1] : undefined,
-            univ2: this.state.univ2 ? line[this.state.univ2] : undefined,
-          } satisfies BadgeParams));
-
-        this.$emit('badges', badges);
       }
     }
   };

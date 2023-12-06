@@ -1,4 +1,4 @@
-import { TypesConfig } from './models';
+import { BadgeType, TypesConfig } from './models';
 import { QRCodeToDataURLOptions } from 'qrcode';
 
 export function year(): string {
@@ -33,6 +33,25 @@ export function capitalize(input: string): string {
         mustUpper = !RegExp(/^\p{L}/,'u').test(char);
     }
     return result;
+}
+
+export function limit(input: string, size: number): string {
+    return input.length < size
+        ? input
+        : input.substring(0, size - 1) + '…';
+}
+
+const MAPPING = new Map<string, BadgeType>([
+    ['Staff', 'staff'],
+    ['Sponsor, Accès Expo', 'sponsor'],
+    ['Speakers', 'speaker'],
+    ['Conférence', 'attendee'],
+    ['Université et Conférence', 'attendee'],
+    ['Sponsor, Accès Conférence', 'attendee'],
+]);
+
+export function typeMapping(input: string): BadgeType | undefined {
+    return MAPPING.get(input);
 }
 
 export function id(doc: Document, id: string, consumer: (params: HTMLElement) => void) {

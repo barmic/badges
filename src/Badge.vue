@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { BadgeParams } from './models';
-import { id, QRCODE_OPTS, TYPES, year, capitalize } from './utils';
+import { id, QRCODE_OPTS, TYPES, year, capitalize, limit } from './utils';
 import QRCode from 'qrcode';
 
 const props = defineProps<{
@@ -20,7 +20,7 @@ const response = await fetch('./badge.svg')
 let svgStr = await response.text();
 
 const badge = computed(() => {
-  if (!props.badgeParams) return false;
+  if (!props.badgeParams || !props.badgeParams.type) return false;
 
   const svg = new DOMParser().parseFromString(svgStr, 'image/svg+xml');
 
@@ -33,12 +33,12 @@ const badge = computed(() => {
     });
   }
 
-  id(svg, 'snc-type-background', elem => elem.style.fill = TYPES[props.badgeParams.type]?.color ?? '#3FC633');
+  id(svg, 'snc-type-background', elem => elem.style.fill = TYPES[props.badgeParams.type ?? 'attendee']?.color ?? '#3FC633');
 
-  id(svg, 'snc-type', elem => elem.textContent = capitalize(props.badgeParams.type));
+  id(svg, 'snc-type', elem => elem.textContent = capitalize(props.badgeParams.type ?? 'attendee'));
 
-  id(svg, 'snc-univ1', elem => elem.textContent = props.badgeParams.univ1 ? capitalize(props.badgeParams.univ1) : '');
-  id(svg, 'snc-univ2', elem => elem.textContent = props.badgeParams.univ2 ? capitalize(props.badgeParams.univ2) : '');
+  id(svg, 'snc-univ1', elem => elem.textContent = props.badgeParams.univ1 ? limit(props.badgeParams.univ1, 47) : '');
+  id(svg, 'snc-univ2', elem => elem.textContent = props.badgeParams.univ2 ? limit(props.badgeParams.univ2, 47) : '');
 
   id(svg, 'snc-year', elem => elem.setAttribute('xlink:href', year()));
 
