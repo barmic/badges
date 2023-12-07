@@ -7,15 +7,15 @@ export function year(): string {
         ? now.getFullYear()
         : now.getFullYear() + 1;
 
-    const size = 52;
+    const size = 42;
     const canvas = document.createElement('canvas');
     canvas.id     = 'CursorLayer';
-    canvas.width  = 200;
+    canvas.width  = 119;
     canvas.height = size;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-        ctx.font = `${size}px snowtop_capsregular`;
-        ctx.fillStyle = 'white';
+        ctx.font = '52px snowtop_capsregular';
+        ctx.fillStyle = 'black';
         ctx.textAlign = 'left';
         ctx.fillText(`${year}`, 0, size); 
     }
@@ -39,19 +39,6 @@ export function limit(input: string, size: number): string {
     return input.length < size
         ? input
         : input.substring(0, size - 1) + '…';
-}
-
-const MAPPING = new Map<string, BadgeType>([
-    ['Staff', 'staff'],
-    ['Sponsor, Accès Expo', 'sponsor'],
-    ['Speakers', 'speaker'],
-    ['Conférence', 'attendee'],
-    ['Université et Conférence', 'attendee'],
-    ['Sponsor, Accès Conférence', 'attendee'],
-]);
-
-export function typeMapping(input: string): BadgeType | undefined {
-    return MAPPING.get(input);
 }
 
 export function id(doc: Document, id: string, consumer: (params: HTMLElement) => void) {
