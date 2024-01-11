@@ -54,7 +54,6 @@ export default {
     generateAll(badges: BadgeParams[], svg: string): Promise<void> {
       let pages: Promise<JSZip> = new Promise((resolve, _reject) => resolve(new JSZip()));
       badges.sort((a, b) => this.sortBadge(a, b));
-      console.table(badges);
       for(let i = 0; i < badges.length; i += 1) {
           const badgeParam = badges[i];
           const badge: SVGElement = this.updateSVG(svg, badgeParam) as any;
@@ -95,6 +94,10 @@ export default {
       id(svg, 'snc-univ2', elem => elem.textContent = user.univ2 ? limit(user.univ2, 45) : '');
 
       id(svg, 'snc-year', elem => elem.setAttribute('xlink:href', year()));
+
+      if (user.meal !== 'vege') {
+        svg.getElementById('vege')?.remove();
+      }
 
       return svg.documentElement;
     },

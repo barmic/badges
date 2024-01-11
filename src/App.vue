@@ -15,7 +15,7 @@
   import Badgeform from './badgeform.vue';
   import Example from './Example.vue';
   import Export from './Export.vue';
-  import { BadgeParams, ColumnsConfig } from './models';
+  import { BadgeParams } from './models';
 
   export default {
     components: { Badgeform, Example, Export },

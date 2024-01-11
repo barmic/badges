@@ -42,6 +42,10 @@ const badge = computed(() => {
 
   id(svg, 'snc-year', elem => elem.setAttribute('xlink:href', year()));
 
+  if (props.badgeParams.meal !== 'vege') {
+    svg.getElementById('vege')?.remove();
+  }
+
   if (section?.value?.childNodes?.[0]) {
     section.value?.replaceChild(svg.documentElement, section.value.childNodes?.[0]);
   } else {

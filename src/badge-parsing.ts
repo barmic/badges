@@ -1,8 +1,8 @@
 import { BadgeParams, BadgeType } from './models';
 
-type CommandLine = Record<'cmd' | 'type' | 'firstname' | 'lastname' | 'barcode', string>;
+type CommandLine = Record<'cmd' | 'type' | 'firstname' | 'lastname' | 'barcode' | 'meal', string>;
 
-export function parseBadges(csv: string[][], columns: Record<'cmd' | 'type' | 'firstname' | 'lastname' | 'barcode', number>): BadgeParams[] {
+export function parseBadges(csv: string[][], columns: Record<'cmd' | 'type' | 'firstname' | 'lastname' | 'barcode' | 'meal', number>): BadgeParams[] {
      const commands = csv.reduce(
       (a: Map<string, CommandLine[]>, b: string[]) => {
         const current = a.get(b[columns.cmd]) ?? [];
@@ -12,6 +12,7 @@ export function parseBadges(csv: string[][], columns: Record<'cmd' | 'type' | 'f
             firstname: b[columns.firstname],
             lastname:b[columns.lastname],
             barcode: b[columns.barcode],
+            meal: b[columns.meal],
         });
         a.set(b[columns.cmd], current);
         return a;
@@ -30,6 +31,7 @@ function commandsBadges(command: CommandLine[]): BadgeParams[] {
             type: MAPPING.get(line.type),
             univ1: foundUniv('Uam', command, line),
             univ2: foundUniv('Upm', command, line),
+            meal: MAPPING_MEAL.get(line.meal) ?? 'meat',
         } satisfies BadgeParams));
 }
 
@@ -55,6 +57,7 @@ const MAPPING = new Map<string, BadgeType>([
     ['Sponsor, Accès Conférence', 'attendee'],
 ]);
 
-export function typeMapping(input: string): BadgeType | undefined {
-    return MAPPING.get(input);
-}
+const MAPPING_MEAL = new Map<string, BadgeParams['meal']>([
+    ['Normal', 'meat'],
+    ['Végétarien', 'vege'],
+]);

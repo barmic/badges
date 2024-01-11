@@ -5,6 +5,7 @@ export interface BadgeParams {
     lastname: string,
     type?: BadgeType,
     barcode: string,
+    meal: 'vege' | 'meat',
     univ1?: string,
     univ2?: string,
 }

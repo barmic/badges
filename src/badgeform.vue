@@ -30,6 +30,7 @@
             type: 1 + (columnsopts.find((col) => col.text === 'Tarif')?.value ?? -1),
             barcode: 1 + (columnsopts.find((col) => col.text === 'Codes-barres')?.value ?? -1),
             cmd: 1 + (columnsopts.find((col) => col.text === 'Commande')?.value ?? -1),
+            meal: 1 + (columnsopts.find((col) => col.text.startsWith('Repas'))?.value ?? -1),
           });
 
           this.$emit('badges', badges);
