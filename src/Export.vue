@@ -6,7 +6,6 @@
 </template>
 
 <script lang="ts">
-import JSZip from 'jszip';
 import { reactive } from 'vue';
 import { BadgeParams } from './models';
 import { capitalize, id, QRCODE_OPTS, limit, TYPES, year } from './utils';
@@ -51,23 +50,29 @@ export default {
         ? aWeight - bWeight
         : a.lastname.localeCompare(b.lastname);
     },
-    generateAll(badges: BadgeParams[], svg: string): Promise<void> {
-      let pages: Promise<JSZip> = new Promise((resolve, _reject) => resolve(new JSZip()));
+    generateAll(badges: BadgeParams[], svg: string): Promise<Blob> {
+      const size = 'A6';
+      const doc = new PDFDocument({size});
+      const stream = doc.pipe(blobStream());
+
       badges.sort((a, b) => this.sortBadge(a, b));
       for(let i = 0; i < badges.length; i += 1) {
           const badgeParam = badges[i];
           const badge: SVGElement = this.updateSVG(svg, badgeParam) as any;
           if (badge) {
             this.state.created += 1;
-            pages = pages.then(async (zip: JSZip) => {
-                const [pdf, name] = await this.generatePdf(i, badge, badgeParam);
-                return zip.file(name, pdf);
-            });
+            if (this.state.created > 1) {
+              doc.addPage();
+            }
+            SVGtoPDF(doc, badge, 0, 0, {});
           }
       }
-
-      return pages.then((zip) => zip.generateAsync({ type: 'blob' }))
-          .then((blob: Blob) => this.generateZip(blob));
+      doc.end();
+      return new Promise<Blob>((_reject) => {
+        stream.on('finish', () => {
+          this.download(stream.toBlob('application/pdf'))
+        })
+      });
     },
     updateSVG(svgTxt: string, user: BadgeParams): HTMLElement | undefined {
       const svg = new DOMParser().parseFromString(svgTxt, 'image/svg+xml');
@@ -81,7 +86,7 @@ export default {
       id(svg, 'snc-lastname', elem => elem.textContent = capitalize(user.lastname));
 
       if (user?.barcode?.trim()) {
-          QRCode.toDataURL(user.barcode, QRCODE_OPTS, (err: any, url: string) => {
+          QRCode.toDataURL(user.barcode, QRCODE_OPTS, (_err: any, url: string) => {
               id(svg, 'snc-barcode', elem => elem.setAttribute('xlink:href', url));
           });
       }
@@ -101,7 +106,7 @@ export default {
 
       return svg.documentElement;
     },
-    generateZip(blob: Blob) {
+    download(blob: Blob) {
         const a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
         const now = new Date();
@@ -111,23 +116,6 @@ export default {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-    },
-    generatePdf(idx: number, badge: SVGElement, params: BadgeParams): Promise<[Blob, string]> {
-        const size = 'A6';
-        const doc = new PDFDocument({size});
-
-        const stream = doc.pipe(blobStream());
-        SVGtoPDF(doc, badge, 0, 0, {});
-        doc.end();
-
-        const index = `${idx}`.padStart(4, '0');
-
-        return new Promise((resolve, _reject) => {
-            stream.on('finish', () => resolve([
-                stream.toBlob('application/pdf'),
-                `${index}_${params.type}_${capitalize(params.lastname)}_${capitalize(params.barcode)}.pdf`,
-            ]));
-        });
     }
   }
 };
