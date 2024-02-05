@@ -57,15 +57,15 @@ export default {
 
       badges.sort((a, b) => this.sortBadge(a, b));
       for(let i = 0; i < badges.length; i += 1) {
-          const badgeParam = badges[i];
-          const badge: SVGElement = this.updateSVG(svg, badgeParam) as any;
-          if (badge) {
-            this.state.created += 1;
-            if (this.state.created > 1) {
-              doc.addPage();
-            }
-            SVGtoPDF(doc, badge, 0, 0, {});
+        const badgeParam = badges[i];
+        const badge: SVGElement = this.updateSVG(svg, badgeParam) as any;
+        if (badge) {
+          this.state.created += 1;
+          if (this.state.created > 1) {
+            doc.addPage();
           }
+          SVGtoPDF(doc, badge, 0, 0, {});
+        }
       }
       doc.end();
       return new Promise<Blob>((_reject) => {

@@ -54,7 +54,7 @@ const MAPPING = new Map<string, BadgeType>([
     ['Speakers', 'speaker'],
     ['Conférence', 'attendee'],
     ['Université et Conférence', 'attendee'],
-    ['Sponsor, Accès Conférence', 'attendee'],
+    ['Sponsor,  Accès Conférence', 'attendee'],
 ]);
 
 const MAPPING_MEAL = new Map<string, BadgeParams['meal']>([
