@@ -1,0 +1,16 @@
+[project]
+name = "badges"
+version = "2025"
+description = "Create badges for snowcamp"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "cairosvg>=2.7.1",
+    "jinja2>=3.1.5",
+    "qrcode>=8.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.4",
+]

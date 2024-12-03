@@ -1,32 +1,29 @@
 # Badge generator
 
-[Outil en ligne](https://barmic.github.io/badges/)
+This project use `uv` as project management (https://github.com/astral-sh/uv).
 
-## CSV input
 
-Input CSV should have at least 6 columns:
+## Create bagdes
 
-- firstname
-- lastname
-- type (`attendee`, `staff`, `speaker`, `sponsor` case insensitive)
-- bare code value
-- University 1
-- University 2
+### Get need files
 
-The first line should be columns titles.
+- CSV input
+  - export from billetweb
+- list of university speakers email
 
-An example of csv can be found here: [examples/compl.csv](https://github.com/barmic/badges/blob/main/examples/compl.csv).
+### Year
 
-## Usage
+Generate year image with `year.html`.
+Copy the base64 in svg file.
 
-1. load CSV
-2. select column of each field of badge
-3. you can check result on some examples
-4. export badges
+### Run the script
 
-## Template
+Run the `generate_badges.py` as
 
-The badge template can be found here [static/badge.svg](https://github.com/barmic/badges/blob/main/static/badge.svg). The SVG must have somes ids :
+```sh
+uv run generate_badges.py billetweb.csv speakers.txt
+```
 
-- `snc-firstname`, `snc-lastname`, `snc-barcode`, `snc-type`, `snc-univ1`, `snc-univ2`, `snc-year` that will receive value in `textContent`
-- `snc-type-background` that will receive background color of type
+### Merges PDF
+
+Merge all resulting PDF in one multipages PDF.
