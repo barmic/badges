@@ -99,17 +99,18 @@ class Badge:
 
     def toVars(self) -> dict[str, str]:
         t = self._type()
-        outline1 = (self.univ1 or "")[7:]
+        top = (self.univ1 or "")[7:]
+        bottom = ""
         if t == "sponsor":
-            outline1 = self.entreprise or ""
+            bottom = self.entreprise or ""
         return {
             "firstname": self.prenom,
             "lastname": self.nom,
             "qrcode": qrcode(self.qrcode),
             "color": COLORS[t],
             "type": t,
-            "outline1": outline1,
-            "outline2": (self.univ2 or "")[7:],
+            "outlineTop": top,
+            "outlineBottom": bottom or (self.univ2 or "")[7:],
             "year": "2025",
             "repas": self.repas,
         }
@@ -118,14 +119,17 @@ class Badge:
         return f"{self.nom}/{self.prenom} {self.qrcode} {self.repas} {self.univ1}/{self.univ2}"
 
     def _type(self) -> str:
-        if any(["Conférence" in tarif for tarif in self.tarifs]):
+        if any(["Conférence" in tarif or "Conference" in tarif for tarif in self.tarifs]):
             return "attendee"
-        elif any(["Stand" in tarif for tarif in self.tarifs]):
+        elif any(["Stand" in tarif or "Sponsors" in tarif for tarif in self.tarifs]):
             return "sponsor"
         elif any(["Speakers" in tarif for tarif in self.tarifs]):
             return "speaker"
-        else:
+        elif any(["Staff" in tarif for tarif in self.tarifs]):
             return "staff"
+        else:
+            raise Exception(f'Unknown type {self.tarifs}')
+            
 
     def weight(self) -> int:
         t = self._type()
